@@ -4,8 +4,10 @@ pragma solidity >=0.5.0 <0.9.0;
 contract Lottery {
     address public manager;
     address payable[] public players;
-    mapping(address => bool) isPlayer;
-    mapping(address => uint256) value;
+    mapping(address => bool) public isPlayer;
+    mapping(address => uint256) public valueOf;
+
+    event pickWinnerEvent(address winner, uint256 totalValue);
 
     constructor() {
         manager = msg.sender;
@@ -19,7 +21,7 @@ contract Lottery {
         );
 
         isPlayer[msg.sender] = true;
-        value[msg.sender] = msg.value;
+        valueOf[msg.sender] = msg.value;
         players.push(payable(msg.sender));
     }
 
@@ -32,22 +34,25 @@ contract Lottery {
             );
     }
 
-    function pickWinner() public onlyOwner returns (address) {
+    function pickWinner() public onlyOwner {
         require(players.length > 0, "There is no player entered the lottery");
         uint256 index = random() % players.length;
         address contractAddress = address(this);
+        emit pickWinnerEvent(address(players[index]), contractAddress.balance);
         players[index].transfer(contractAddress.balance);
-        address winner = address(players[index]);
         for (uint256 i = 0; i < players.length; i++) {
             delete isPlayer[address(players[i])];
-            delete value[address(players[i])];
+            delete valueOf[address(players[i])];
         }
         players = new address payable[](0);
-        return winner;
     }
 
-    function getPlayer() public view returns (address payable[] memory) {
+    function getPlayers() public view returns (address payable[] memory) {
         return players;
+    }
+
+    function getTotalValue() public view returns (uint256) {
+        return address(this).balance;
     }
 
     modifier onlyOwner() {
