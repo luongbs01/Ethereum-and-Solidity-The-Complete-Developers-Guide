@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
 import initWeb3 from "./utils/web3";
 import { abi, contractAddress } from "./utils/lottery"
 import './App.css';
+import Table from "./components/Table";
 const { ethereum } = window;
 
 function App() {
   const [web3, setWeb3] = useState(null);
   const [connected, setConnected] = useState(false);
 
+  const [winner, setWinner] = useState(null);
   const [manager, setManager] = useState('');
   const [players, setPlayers] = useState([]);
   const [balance, setBalance] = useState('');
@@ -47,7 +49,11 @@ function App() {
 
   const getInfo = async () => {
     const manager = await lotteryContract.current.methods.manager().call();
-    const players = await lotteryContract.current.methods.getPlayers().call();
+    const addresses = await lotteryContract.current.methods.getPlayers().call();
+    const players = await Promise.all(addresses.map(async (address) => {
+      const valueOf = web3.utils.fromWei(await lotteryContract.current.methods.valueOf(address).call(), "ether");
+      return { address, valueOf };
+    }));
     const balance = await web3.eth.getBalance(lotteryContract.current.options.address);
     setManager(manager);
     setPlayers(players);
@@ -78,7 +84,11 @@ function App() {
     const accounts = await web3.eth.getAccounts();
     lotteryContract.current.events.pickWinnerEvent()
       .on("data", (event) => {
-        console.log(event.returnValues);
+        const winner = {
+          winner: event.returnValues.winner,
+          totalValue: web3.utils.fromWei(event.returnValues.totalValue, "ether")
+        };
+        setWinner(winner);
       });
     await lotteryContract.current.methods.pickWinner().send({
       from: accounts[0]
@@ -109,8 +119,17 @@ function App() {
             <button>Enter</button>
           </form>
           <hr />
+          <table>
+            <tr>
+              <th>Player</th>
+              <th>Value</th>
+            </tr>
+            <Table players={players}></Table>
+          </table>
+          <hr />
           <h4>Ready to pick a winner?</h4>
           <button onClick={onClick}>Pick a winner!</button>
+          {winner && <h4>Winner: {winner.winner}, Prize: {winner.totalValue}</h4>}
         </>
       )}
     </div>

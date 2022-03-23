@@ -51,10 +51,6 @@ contract Lottery {
         return players;
     }
 
-    function getTotalValue() public view returns (uint256) {
-        return address(this).balance;
-    }
-
     modifier onlyOwner() {
         require(msg.sender == manager, "Only owner can call this function.");
         _;
