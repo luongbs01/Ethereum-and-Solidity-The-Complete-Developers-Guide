@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, useLayoutEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Button, Form, Table, Grid } from "semantic-ui-react";
 import initWeb3 from "./utils/web3";
 import { abi, contractAddress } from "./utils/lottery"
 import './App.css';
-import Table from "./components/Table";
+import TableOfPlayers from "./components/Table";
 const { ethereum } = window;
 
 function App() {
@@ -100,35 +101,37 @@ function App() {
     <div className="App">
       <h2>Lottery Contract</h2>
       {!connected && (
-        <button onClick={connectMetamask}>Connect with Metamask</button>
+        <Button onClick={connectMetamask}>Connect with Metamask</Button>
       )}
       {web3 !== null && connected && (
         <>
           <p>
             This contract is managed by {manager}. There are currently {` ${players.length}`} people entered, competing to win {` ${web3.utils.fromWei(balance, "ether")}`} ether!
           </p>
-          <form onSubmit={onSubmit}>
-            <h4>Wanna try your luck?</h4>
-            <div>
+          <h4>Wanna try your luck?</h4>
+          <Form onSubmit={onSubmit}>
+            <Form.Field>
               <label>Amount of ether to enter</label>
               <input
                 value={value}
                 onChange={(event) => setValue(event.target.value)}
               />
-            </div>
-            <button>Enter</button>
-          </form>
-          <hr />
-          <table>
-            <tr>
-              <th>Player</th>
-              <th>Value</th>
-            </tr>
-            <Table players={players}></Table>
-          </table>
-          <hr />
+            </Form.Field>
+            <Button primary>Enter</Button>
+          </Form>
+          <Table collapsing>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Player</Table.HeaderCell>
+                <Table.HeaderCell>Value</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              <TableOfPlayers players={players}></TableOfPlayers>
+            </Table.Body>
+          </Table>
           <h4>Ready to pick a winner?</h4>
-          <button onClick={onClick}>Pick a winner!</button>
+          <Button onClick={onClick} primary>Pick a winner!</Button>
           {winner && <h4>Winner: {winner.winner}, Prize: {winner.totalValue}</h4>}
         </>
       )}

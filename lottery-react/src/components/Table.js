@@ -1,15 +1,16 @@
 import React from "react";
+import { Table } from "semantic-ui-react";
 
-const Table = ({ players }) => {
+const TableOfPlayers = ({ players }) => {
     const rows = players.map((player, index) => {
         return (
-            <tr key={index}>
-                <td>{player.address}</td>
-                <td>{player.valueOf}</td>
-            </tr>
+            <Table.Row key={index}>
+                <Table.Cell>{player.address}</Table.Cell>
+                <Table.Cell>{player.valueOf}</Table.Cell>
+            </Table.Row>
         );
     });
     return rows;
 }
 
-export default Table;
+export default TableOfPlayers;
