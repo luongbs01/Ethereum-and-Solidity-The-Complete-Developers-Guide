@@ -9,6 +9,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@truffle/hdwallet-provider": "^2.0.4",
+    "dotenv": "^16.0.0",
     "fs-extra": "^10.0.1",
     "ganache-cli": "^6.12.2",
     "mocha": "^9.2.2",
