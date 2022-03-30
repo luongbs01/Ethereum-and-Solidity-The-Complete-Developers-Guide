@@ -2,3 +2,7 @@ node_modules
 
 # Environment file
 .env
+
+# next.js
+/.next/
+/out/
