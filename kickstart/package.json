@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "dev": "next dev"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +14,6 @@
     "fs-extra": "^10.0.1",
     "ganache-cli": "^6.12.2",
     "mocha": "^9.2.2",
-    "next": "^12.1.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "solc": "^0.8.13",
